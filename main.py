@@ -18,7 +18,6 @@ brands = {
 
 @app.get("/variables")
 def no_default_brand():
-    # No default brand allowed, so always raise error if no brand specified
     raise HTTPException(status_code=400, detail="Brand not specified. Use /variables/{brand_name}")
 
 @app.get("/variables/{brand_name}")
