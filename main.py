@@ -1,28 +1,24 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
-brands = {
+BRANDS = {
     "NEXUS": {
         "NAME": "NEXUS",
-        "DISCORD_URL": "",
-        "COLOR": "blue"
+        "DISCORD_URL": "https://discord.gg/nexus",
+        "COLOR": "#00FFFF"
     },
     "ECORE": {
         "NAME": "ECORE",
-        "DISCORD_URL": "https://discord.gg/your-ecore-link",
-        "COLOR": "green"
-    },
-    # Add more brands here
+        "DISCORD_URL": "https://discord.gg/ecore",
+        "COLOR": "#FF00FF"
+    }
 }
 
-@app.get("/variables")
-def no_default_brand():
-    raise HTTPException(status_code=400, detail="Brand not specified. Use /variables/{brand_name}")
-
-@app.get("/variables/{brand_name}")
-def get_variables(brand_name: str):
-    brand_data = brands.get(brand_name.upper())
-    if not brand_data:
-        raise HTTPException(status_code=404, detail="Brand not found")
-    return brand_data
+@app.get("/variables/{brand}")
+def get_variables(brand: str):
+    brand = brand.upper()
+    if brand in BRANDS:
+        return BRANDS[brand]
+    return JSONResponse(content={"error": "ERROR"}, status_code=404)
