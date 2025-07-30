@@ -1,15 +1,22 @@
-from file import get_api_data
+import requests
+from fastapi import FastAPI
 
-NAME = "NEXUS"
+API_URL = "https://afklol-api.onrender.com"
 
-def main():
-    print(f"Running main with NAME = {NAME}")
-  
-    data = get_api_data(params={"name": NAME})
-    if data:
-        print("API data received:", data)
-    else:
-        print("Failed to get API data.")
+def get_api_data(params=None):
+    try:
+        response = requests.get(API_URL, params=params)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"API connection error: {e}")
+        return None
 
-if __name__ == "__main__":
-    main()
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    data = get_api_data(params={"name": "NEXUS"})
+    if data is None:
+        return {"error": "Failed to fetch data from API"}
+    return {"data": data}
